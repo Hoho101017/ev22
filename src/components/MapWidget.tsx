@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useApp } from "@/lib/app-context";
+import { HOME_ROUTE_DISPLAY_TOKEN } from "@/components/NearbyStationsPanel";
 import { LeafletMap } from "@/components/LeafletMap";
 import type { LatLngBoundsExpression, LatLngExpression } from "leaflet";
 import {
@@ -13,7 +14,7 @@ import {
 const FALLBACK: [number, number] = [1.5533, 110.3592];
 
 export function MapWidget({ className = "", clickable = true, fullscreen = false }: { className?: string; clickable?: boolean; fullscreen?: boolean }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { theme, activeRoute } = useApp();
   const [coords, setCoords] = useState<[number, number]>(FALLBACK);
 
@@ -101,8 +102,22 @@ export function MapWidget({ className = "", clickable = true, fullscreen = false
     ? "bg-black/50 text-white/95 ring-1 ring-white/25 shadow-md"
     : "bg-app-panel text-foreground/80 ring-1 ring-black/8 shadow-sm";
 
+  const destinationLabel = useMemo(() => {
+    if (!activeRoute) return "";
+    const n = activeRoute.destinationName.trim();
+    const q = (activeRoute.routingQueryKey ?? "").trim();
+    if (
+      n === HOME_ROUTE_DISPLAY_TOKEN ||
+      q.endsWith(`:${HOME_ROUTE_DISPLAY_TOKEN}`) ||
+      n === "Home"
+    ) {
+      return t("map.homeShortcut");
+    }
+    return activeRoute.destinationName;
+  }, [activeRoute, t, i18n.language, i18n.resolvedLanguage]);
+
   const navLabel = activeRoute
-    ? t("map.routingTo", { destination: activeRoute.destinationName })
+    ? t("map.routingTo", { destination: destinationLabel })
     : t("map.navigation");
 
   const inner = (

@@ -2,15 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SkipForward, Plus, Minus } from "lucide-react";
 import { useApp } from "@/lib/app-context";
-import { getNowPlayingText } from "@/lib/media-now-playing";
 import { PLAYLIST } from "@/components/MediaCard";
 
 export function MusicQuickCard() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { volume, setVolume, trackIdx, setTrackIdx, playing, setPlaying, audioEl, setProgress } = useApp();
-  const nowPlayingLabel = i18n.exists("media.nowPlaying", { lng: i18n.resolvedLanguage || i18n.language, fallbackLng: false })
-    ? t("media.nowPlaying")
-    : getNowPlayingText(i18n.resolvedLanguage || i18n.language);
   const [previewNextTitle, setPreviewNextTitle] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
 
@@ -47,10 +43,7 @@ export function MusicQuickCard() {
   return (
     <div className="flex h-full w-full items-center justify-between gap-[12px] px-[12px] py-[12px]">
       <div className="min-w-0">
-        <div className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
-          {nowPlayingLabel}
-        </div>
-        <div className="mt-[4px] min-w-0 truncate text-[14px] font-semibold text-foreground">
+        <div className="min-w-0 truncate text-[14px] font-semibold text-foreground">
           {showPreview && previewNextTitle ? `Next song: ${previewNextTitle}` : curTrack.title}
         </div>
         <div className="mt-[2px] truncate text-[11px] text-muted-foreground">

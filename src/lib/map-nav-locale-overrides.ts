@@ -123,6 +123,8 @@ const PATCHES: Record<string, NavPatch> = {
     map: {
       navAfterMeters: "{{meters}}{{unit}}先で{{action}}",
       navArriveAfterMeters: "あと{{meters}}{{unit}}で到着",
+      navRemainingLabel: "残り",
+      navArrivalLabel: "到着",
       maneuver: m({
         turnLeft: "左折",
         turnRight: "右折",
@@ -150,6 +152,8 @@ const PATCHES: Record<string, NavPatch> = {
     map: {
       navAfterMeters: "{{action}} in {{meters}}\u00a0{{unit}}",
       navArriveAfterMeters: "Ankunft in {{meters}}\u00a0{{unit}}",
+      navRemainingLabel: "Verbleibend",
+      navArrivalLabel: "Ankunft",
       maneuver: m({
         turnLeft: "Links abbiegen",
         turnRight: "Rechts abbiegen",
@@ -177,6 +181,8 @@ const PATCHES: Record<string, NavPatch> = {
     map: {
       navAfterMeters: "{{action}} dans {{meters}}\u00a0{{unit}}",
       navArriveAfterMeters: "Arrivée dans {{meters}}\u00a0{{unit}}",
+      navRemainingLabel: "Restant",
+      navArrivalLabel: "Arrivée",
       maneuver: m({
         turnLeft: "Tournez à gauche",
         turnRight: "Tournez à droite",
@@ -204,6 +210,8 @@ const PATCHES: Record<string, NavPatch> = {
     map: {
       navAfterMeters: "{{action}} en {{meters}}\u00a0{{unit}}",
       navArriveAfterMeters: "Llegada en {{meters}}\u00a0{{unit}}",
+      navRemainingLabel: "Restante",
+      navArrivalLabel: "Llegada",
       maneuver: m({
         turnLeft: "Gira a la izquierda",
         turnRight: "Gira a la derecha",
@@ -231,6 +239,8 @@ const PATCHES: Record<string, NavPatch> = {
     map: {
       navAfterMeters: "{{action}} tra {{meters}}\u00a0{{unit}}",
       navArriveAfterMeters: "Arrivo tra {{meters}}\u00a0{{unit}}",
+      navRemainingLabel: "Rimanente",
+      navArrivalLabel: "Arrivo",
       maneuver: m({
         turnLeft: "Svolta a sinistra",
         turnRight: "Svolta a destra",
@@ -258,6 +268,8 @@ const PATCHES: Record<string, NavPatch> = {
     map: {
       navAfterMeters: "{{action}} em {{meters}}\u00a0{{unit}}",
       navArriveAfterMeters: "Chegada em {{meters}}\u00a0{{unit}}",
+      navRemainingLabel: "Restante",
+      navArrivalLabel: "Chegada",
       maneuver: m({
         turnLeft: "Vire à esquerda",
         turnRight: "Vire à direita",
@@ -285,6 +297,8 @@ const PATCHES: Record<string, NavPatch> = {
     map: {
       navAfterMeters: "{{meters}}{{unit}} 앞에서 {{action}}",
       navArriveAfterMeters: "{{meters}}{{unit}} 앞 도착",
+      navRemainingLabel: "남음",
+      navArrivalLabel: "도착",
       maneuver: m({
         turnLeft: "좌회전",
         turnRight: "우회전",
@@ -312,6 +326,8 @@ const PATCHES: Record<string, NavPatch> = {
     map: {
       navAfterMeters: "{{action}} setelah {{meters}}\u00a0{{unit}}",
       navArriveAfterMeters: "Tiba setelah {{meters}}\u00a0{{unit}}",
+      navRemainingLabel: "Sisa",
+      navArrivalLabel: "Tiba",
       maneuver: m({
         turnLeft: "Belok kiri",
         turnRight: "Belok kanan",
@@ -339,6 +355,8 @@ const PATCHES: Record<string, NavPatch> = {
     map: {
       navAfterMeters: "อีก {{meters}}\u00a0{{unit}} {{action}}",
       navArriveAfterMeters: "ถึงปลายทางใน {{meters}}\u00a0{{unit}}",
+      navRemainingLabel: "เหลือ",
+      navArrivalLabel: "ถึง",
       maneuver: m({
         turnLeft: "เลี้ยวซ้าย",
         turnRight: "เลี้ยวขวา",
@@ -366,6 +384,8 @@ const PATCHES: Record<string, NavPatch> = {
     map: {
       navAfterMeters: "{{action}} sau {{meters}}\u00a0{{unit}}",
       navArriveAfterMeters: "Đến nơi sau {{meters}}\u00a0{{unit}}",
+      navRemainingLabel: "Còn lại",
+      navArrivalLabel: "Đến nơi",
       maneuver: m({
         turnLeft: "Rẽ trái",
         turnRight: "Rẽ phải",
@@ -393,6 +413,8 @@ const PATCHES: Record<string, NavPatch> = {
     map: {
       navAfterMeters: "{{meters}}\u00a0{{unit}} बाद {{action}}",
       navArriveAfterMeters: "{{meters}}\u00a0{{unit}} बाद पहुँचें",
+      navRemainingLabel: "शेष",
+      navArrivalLabel: "पहुँच",
       maneuver: m({
         turnLeft: "बाएँ मुड़ें",
         turnRight: "दाएँ मुड़ें",
@@ -420,6 +442,8 @@ const PATCHES: Record<string, NavPatch> = {
     map: {
       navAfterMeters: "{{action}} بعد {{meters}}\u00a0{{unit}}",
       navArriveAfterMeters: "الوصول بعد {{meters}}\u00a0{{unit}}",
+      navRemainingLabel: "المتبقي",
+      navArrivalLabel: "الوصول",
       maneuver: m({
         turnLeft: "انعطف يساراً",
         turnRight: "انعطف يميناً",
@@ -447,6 +471,8 @@ const PATCHES: Record<string, NavPatch> = {
     map: {
       navAfterMeters: "{{action}} через {{meters}}\u00a0{{unit}}",
       navArriveAfterMeters: "Прибытие через {{meters}}\u00a0{{unit}}",
+      navRemainingLabel: "Осталось",
+      navArrivalLabel: "Прибытие",
       maneuver: m({
         turnLeft: "Поверните налево",
         turnRight: "Поверните направо",
@@ -474,6 +500,8 @@ const PATCHES: Record<string, NavPatch> = {
     map: {
       navAfterMeters: "{{meters}}\u00a0{{unit}} க்குப் பிறகு {{action}}",
       navArriveAfterMeters: "{{meters}}\u00a0{{unit}} க்குப் பிறகு வந்தடையுங்கள்",
+      navRemainingLabel: "மீதி",
+      navArrivalLabel: "வருகை",
       maneuver: m({
         turnLeft: "இடதுபுறம் திரும்பவும்",
         turnRight: "வலதுபுறம் திரும்பவும்",
@@ -501,6 +529,8 @@ const PATCHES: Record<string, NavPatch> = {
     map: {
       navAfterMeters: "{{meters}}\u00a0{{unit}} sonra {{action}}",
       navArriveAfterMeters: "{{meters}}\u00a0{{unit}} sonra varış",
+      navRemainingLabel: "Kalan",
+      navArrivalLabel: "Varış",
       maneuver: m({
         turnLeft: "Sola dönün",
         turnRight: "Sağa dönün",
@@ -528,6 +558,8 @@ const PATCHES: Record<string, NavPatch> = {
     map: {
       navAfterMeters: "{{action}} over {{meters}}\u00a0{{unit}}",
       navArriveAfterMeters: "Aankomst over {{meters}}\u00a0{{unit}}",
+      navRemainingLabel: "Resterend",
+      navArrivalLabel: "Aankomst",
       maneuver: m({
         turnLeft: "Ga linksaf",
         turnRight: "Ga rechtsaf",
@@ -555,6 +587,8 @@ const PATCHES: Record<string, NavPatch> = {
     map: {
       navAfterMeters: "{{action}} om {{meters}}\u00a0{{unit}}",
       navArriveAfterMeters: "Ankomst om {{meters}}\u00a0{{unit}}",
+      navRemainingLabel: "Återstår",
+      navArrivalLabel: "Ankomst",
       maneuver: m({
         turnLeft: "Sväng vänster",
         turnRight: "Sväng höger",
@@ -582,6 +616,8 @@ const PATCHES: Record<string, NavPatch> = {
     map: {
       navAfterMeters: "{{action}} za {{meters}}\u00a0{{unit}}",
       navArriveAfterMeters: "Przyjazd za {{meters}}\u00a0{{unit}}",
+      navRemainingLabel: "Pozostało",
+      navArrivalLabel: "Przyjazd",
       maneuver: m({
         turnLeft: "Skręć w lewo",
         turnRight: "Skręć w prawo",
@@ -609,6 +645,8 @@ const PATCHES: Record<string, NavPatch> = {
     map: {
       navAfterMeters: "{{action}} за {{meters}}\u00a0{{unit}}",
       navArriveAfterMeters: "Прибуття за {{meters}}\u00a0{{unit}}",
+      navRemainingLabel: "Залишилось",
+      navArrivalLabel: "Прибуття",
       maneuver: m({
         turnLeft: "Поверніть ліворуч",
         turnRight: "Поверніть праворуч",
@@ -636,6 +674,8 @@ const PATCHES: Record<string, NavPatch> = {
     map: {
       navAfterMeters: "{{action}} پس از {{meters}}\u00a0{{unit}}",
       navArriveAfterMeters: "رسیدن پس از {{meters}}\u00a0{{unit}}",
+      navRemainingLabel: "باقی‌مانده",
+      navArrivalLabel: "رسیدن",
       maneuver: m({
         turnLeft: "به چپ بپیچید",
         turnRight: "به راست بپیچید",
@@ -663,6 +703,8 @@ const PATCHES: Record<string, NavPatch> = {
     map: {
       navAfterMeters: "{{meters}}\u00a0{{unit}} পরে {{action}}",
       navArriveAfterMeters: "{{meters}}\u00a0{{unit}} পরে পৌঁছাবেন",
+      navRemainingLabel: "বাকি",
+      navArrivalLabel: "পৌঁছানো",
       maneuver: m({
         turnLeft: "বাঁ দিকে মোড় নিন",
         turnRight: "ডান দিকে মোড় নিন",
@@ -690,6 +732,8 @@ const PATCHES: Record<string, NavPatch> = {
     map: {
       navAfterMeters: "{{meters}}\u00a0{{unit}} بعد {{action}}",
       navArriveAfterMeters: "{{meters}}\u00a0{{unit}} بعد پہنچیں",
+      navRemainingLabel: "باقی",
+      navArrivalLabel: "آمد",
       maneuver: m({
         turnLeft: "بائیں مڑیں",
         turnRight: "دائیں مڑیں",
@@ -717,6 +761,8 @@ const PATCHES: Record<string, NavPatch> = {
     map: {
       navAfterMeters: "{{action}} pagkalipas ng {{meters}}\u00a0{{unit}}",
       navArriveAfterMeters: "Dating sa {{meters}}\u00a0{{unit}}",
+      navRemainingLabel: "Natitira",
+      navArrivalLabel: "Pagdating",
       maneuver: m({
         turnLeft: "Kumaliwa",
         turnRight: "Kumanan",

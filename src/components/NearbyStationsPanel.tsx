@@ -56,9 +56,12 @@ export const KUCHING_CHARGING_STATIONS: ChargingStation[] = [
   },
 ];
 
+/** Stable token in `@lat,lng:…` routes so UI can always show `map.homeShortcut` in the current language. */
+export const HOME_ROUTE_DISPLAY_TOKEN = "__route_home__";
+
 const HOME_DESTINATION: ChargingStation = {
   id: "home-unimas",
-  name: "Home",
+  name: HOME_ROUTE_DISPLAY_TOKEN,
   address: "UNIMAS",
   // Type isn't shown for the Home shortcut row, but we keep the type for compatibility.
   type: "AC",
@@ -99,10 +102,7 @@ export function NearbyStationsPanel({ origin, open, onClose, onSelect }: Props) 
   const { t } = useTranslation();
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const homeDestination = useMemo(
-    () => ({ ...HOME_DESTINATION, name: t("map.homeShortcut") }),
-    [t],
-  );
+  const homeDestination = useMemo(() => ({ ...HOME_DESTINATION }), []);
 
   const sorted = useMemo(() => {
     return KUCHING_CHARGING_STATIONS.map((s) => ({

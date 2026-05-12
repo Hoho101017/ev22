@@ -1,7 +1,6 @@
 import { Minus, Plus, SkipForward, Pause, Play, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useApp } from "@/lib/app-context";
-import { getNowPlayingText } from "@/lib/media-now-playing";
 import { PLAYLIST } from "@/components/MediaCard";
 
 interface TopBarMusicCardProps {
@@ -9,13 +8,10 @@ interface TopBarMusicCardProps {
 }
 
 export function TopBarMusicCard({ onClose }: TopBarMusicCardProps) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { volume, setVolume, trackIdx, setTrackIdx, setProgress, playing, setPlaying, audioEl } = useApp();
   const curTrack = PLAYLIST[trackIdx];
   const nextIdx = (trackIdx + 1) % PLAYLIST.length;
-  const nowPlayingLabel = i18n.exists("media.nowPlaying", { lng: i18n.resolvedLanguage || i18n.language, fallbackLng: false })
-    ? t("media.nowPlaying")
-    : getNowPlayingText(i18n.resolvedLanguage || i18n.language);
 
   const clamp = (value: number) => Math.min(1, Math.max(0, value));
   const changeVolume = (delta: number) => setVolume((prev) => clamp(prev + delta));
@@ -36,7 +32,6 @@ export function TopBarMusicCard({ onClose }: TopBarMusicCardProps) {
   return (
     <div className="flex h-[52px] max-w-[420px] min-w-[360px] items-center gap-[12px] rounded-[22px] bg-app-panel px-[16px] shadow-sm ring-1 ring-black/5">
       <div className="min-w-0 max-w-[190px]">
-        <div className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">{nowPlayingLabel}</div>
         <div className={`truncate font-semibold text-foreground ${titleClass}`} style={{ lineHeight: 1.1 }}>
           {curTrack.title}
         </div>

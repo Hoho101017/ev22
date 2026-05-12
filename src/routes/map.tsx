@@ -8,7 +8,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LeafletMap } from "@/components/LeafletMap";
 import type { LatLngBoundsExpression, LatLngExpression } from "leaflet";
-import { NearbyStationsPanel, type ChargingStation } from "@/components/NearbyStationsPanel";
+import { NearbyStationsPanel, HOME_ROUTE_DISPLAY_TOKEN, type ChargingStation } from "@/components/NearbyStationsPanel";
 import { NavigationCueOverlay } from "@/components/NavigationCueOverlay";
 import { useApp, type ActiveRoute } from "@/lib/app-context";
 import {
@@ -23,6 +23,18 @@ import {
 } from "@/lib/osrm-navigation";
 import type { NavigationCue } from "@/lib/osrm-navigation";
 import { prefetchPlaceLabel } from "@/lib/reverse-geocode-place";
+
+function isHomeRouteDisplayName(name: string): boolean {
+  const n = name.trim();
+  return n === HOME_ROUTE_DISPLAY_TOKEN || n === "Home";
+}
+
+function resolveRouteDestinationLabel(
+  displayName: string,
+  t: (key: string, opts?: Record<string, unknown>) => string,
+): string {
+  return isHomeRouteDisplayName(displayName) ? t("map.homeShortcut") : displayName;
+}
 
 type MapSearch = { destination?: string };
 
@@ -72,9 +84,10 @@ function MapPage() {
     (initialDest ?? "").trim() ||
     (activeRoute?.routingQueryKey ?? activeRoute?.destinationName ?? "").trim();
   const initialParsed = parseDirect(resumeRoutingQuery || (activeRoute?.destinationName ?? ""));
-  const [destination, setDestination] = useState(initialParsed.displayName);
+  const initialDisplayName = resolveRouteDestinationLabel(initialParsed.displayName, t);
+  const [destination, setDestination] = useState(initialDisplayName);
   const [activeDestination, setActiveDestination] = useState(resumeRoutingQuery);
-  const [shownDestination, setShownDestination] = useState(initialParsed.displayName);
+  const [shownDestination, setShownDestination] = useState(initialDisplayName);
   // Demo default: Kuching as current location.
   const [origin] = useState<{ lat: number; lng: number } | null>({ lat: 1.5533, lng: 110.3592 });
   const [geoError, setGeoError] = useState(false);
@@ -118,12 +131,23 @@ function MapPage() {
     // Without this guard, this effect re-applies the old destination for one render.
     if (ignoreNextSearchSyncRef.current) return;
     const { displayName } = parseDirect(next);
+    const friendlyName = resolveRouteDestinationLabel(displayName, t);
 
     // Always keep the input/label human-friendly, even if routing destination didn't change.
-    if (destination !== displayName) setDestination(displayName);
-    if (shownDestination !== displayName) setShownDestination(displayName);
+    if (destination !== friendlyName) setDestination(friendlyName);
+    if (shownDestination !== friendlyName) setShownDestination(friendlyName);
     if (next !== activeDestination) setActiveDestination(next);
-  }, [initialDest, activeDestination]);
+  }, [initialDest, activeDestination, t, i18n.language, i18n.resolvedLanguage]);
+
+  useEffect(() => {
+    const q = activeDestination.trim();
+    if (!q) return;
+    const { displayName } = parseDirect(q);
+    if (!isHomeRouteDisplayName(displayName)) return;
+    const label = t("map.homeShortcut");
+    setDestination((prev) => (prev === label ? prev : label));
+    setShownDestination((prev) => (prev === label ? prev : label));
+  }, [activeDestination, t, i18n.language, i18n.resolvedLanguage]);
 
   useEffect(() => {
     setGeoError(false);
@@ -166,6 +190,15 @@ function MapPage() {
     () => (routeLine && routeLine.length > 1 ? (routeLine as Array<[number, number]>) : null),
     [routeLine],
   );
+
+  const routingBannerDestination = useMemo(() => {
+    const q = activeDestination.trim();
+    if (q) {
+      const { displayName } = parseDirect(q);
+      if (isHomeRouteDisplayName(displayName)) return t("map.homeShortcut");
+    }
+    return resolveRouteDestinationLabel(shownDestination, t);
+  }, [activeDestination, shownDestination, t, i18n.language, i18n.resolvedLanguage]);
 
   // Stop sim on stale route when the user changes the routing string (skip first run — avoid clearing on remount).
   useEffect(() => {
@@ -507,7 +540,7 @@ function MapPage() {
               <div className="min-w-0">
                 <div className="flex min-w-0 items-center gap-3 text-sm font-semibold leading-tight">
                   <span className="truncate text-base text-foreground/95">
-                    {t("map.routingTo", { destination: shownDestination })}
+                    {t("map.routingTo", { destination: routingBannerDestination })}
                   </span>
                   {navTimeSummary ? (
                     <span className="min-w-0 truncate text-[15px] font-bold text-[var(--brand)]">
@@ -527,9 +560,9 @@ function MapPage() {
               open={stationsOpen}
               onClose={() => setStationsOpen(false)}
               onSelect={(s: ChargingStation) => {
-                // Show the station name (match reference UI).
-                setDestination(s.name);
-                setShownDestination(s.name);
+                const label = resolveRouteDestinationLabel(s.name, t);
+                setDestination(label);
+                setShownDestination(label);
                 // Route reliably using the station coordinates (OSRM works best with lat/lng).
                 // We still keep the real address in the station list for display.
                 setActiveDestination(`@${s.lat},${s.lng}:${s.name}`);
@@ -549,7 +582,7 @@ function MapPage() {
             />
             {shownDestination && !navigationActive && (
               <div className="pointer-events-none absolute left-1/2 top-3 z-[1100] -translate-x-1/2 rounded-xl bg-black/65 px-3 py-1.5 text-sm font-medium text-white backdrop-blur">
-                {t("map.routingTo", { destination: shownDestination })}
+                {t("map.routingTo", { destination: routingBannerDestination })}
               </div>
             )}
             {geoError && (
