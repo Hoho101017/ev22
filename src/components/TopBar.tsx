@@ -1,9 +1,21 @@
 import { SearchBar } from "./SearchBar";
+import { TopBarMusicCard } from "./TopBarMusicCard";
+import { Music } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useRouterState } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
+import { useApp } from "@/lib/app-context";
 
 export function TopBar() {
   const { i18n } = useTranslation();
+  const { location } = useRouterState();
+  const { activeRoute } = useApp();
+  const path = location.pathname;
+  const [topBarMusicVisible, setTopBarMusicVisible] = useState(true);
+  const showMusicCard =
+    topBarMusicVisible && path === "/map" && activeRoute?.navigationHudShown && activeRoute.routeLine.length > 1;
+  const showMusicIcon =
+    !topBarMusicVisible && path === "/map" && activeRoute?.navigationHudShown && activeRoute.routeLine.length > 1;
   const [now, setNow] = useState<Date | null>(null);
   useEffect(() => {
     setNow(new Date());
@@ -31,7 +43,7 @@ export function TopBar() {
     : "--- | -- ---";
 
   return (
-    <header className="relative z-[200] flex h-[68px] shrink-0 items-center justify-between gap-3 overflow-visible px-[16px] pt-[12px] pb-[12px]">
+    <header className="relative z-[200] flex h-[68px] shrink-0 items-center justify-between gap-4 overflow-visible px-[16px] pt-[12px] pb-[12px]">
       <div className="min-w-0 flex-1 leading-none">
         <span
           className="block overflow-hidden text-ellipsis whitespace-nowrap font-bold tracking-tight"
@@ -46,6 +58,18 @@ export function TopBar() {
           {date}
         </span>
       </div>
+      {showMusicCard ? (
+        <TopBarMusicCard onClose={() => setTopBarMusicVisible(false)} />
+      ) : showMusicIcon ? (
+        <button
+          type="button"
+          onClick={() => setTopBarMusicVisible(true)}
+          className="flex h-[40px] w-[40px] items-center justify-center rounded-[16px] bg-app-panel-soft text-foreground transition hover:bg-[var(--active)]/15"
+          aria-label={i18n.t("media.openQuickMusic", "Open music")}
+        >
+          <Music className="h-[18px] w-[18px]" strokeWidth={1.8} />
+        </button>
+      ) : null}
       <SearchBar />
     </header>
   );

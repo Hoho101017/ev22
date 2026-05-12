@@ -10,7 +10,7 @@ import whiteChristmas from "@/assets/white-christmas.mp3";
 import heyJude from "@/assets/hey-jude.mp3";
 import xinYuanBianLiTie from "@/assets/xin-yuan-bian-li-tie.mp3";
 
-const PLAYLIST = [
+export const PLAYLIST = [
   { title: "Heal the World", artist: "Michael Jackson", src: healTheWorld },
   { title: "Driving Light", artist: "Ambient", src: drivingLight },
   { title: "Kalimba", artist: "Mr. Scruff", src: kalimba2 },

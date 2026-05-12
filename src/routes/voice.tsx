@@ -10,6 +10,7 @@ import { Mic } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { CockpitLayout } from "@/components/CockpitLayout";
 import { useApp } from "@/lib/app-context";
+import { speechLangFor } from "@/lib/speech-lang-map";
 import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/voice")({ component: VoicePage });
@@ -107,22 +108,10 @@ function VoicePage() {
     const W = window as any;
     const SRClass = W.SpeechRecognition || W.webkitSpeechRecognition;
     if (!SRClass) { setSpokenText(t("voice.notSupported")); return; }
-    const langMap: Record<string, string> = {
-      en: "en-US",
-      ms: "ms-MY",
-      ta: "ta-IN",
-      "zh-Hans": "zh-CN",
-      "zh-Hant": "zh-TW",
-      iba: "ms-MY",
-      melanau: "ms-MY",
-      bidayuh: "ms-MY",
-      kelabit: "ms-MY",
-      es: "es-ES",
-    };
     const r = new SRClass();
     r.continuous = true;
     r.interimResults = true;
-    r.lang = langMap[language] ?? language ?? "en-US";
+    r.lang = speechLangFor(language);
     r.onresult = (e: any) => {
       const text = Array.from(e.results)
         .map((res: any) => String(res?.[0]?.transcript ?? ""))

@@ -2,6 +2,7 @@ import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { Mic, Search, X, Clock } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useApp } from "@/lib/app-context";
+import { speechLangFor } from "@/lib/speech-lang-map";
 import { useTranslation } from "react-i18next";
 
 const TARGETS: { kw: string[]; to: string; labelKey: string }[] = [
@@ -91,19 +92,7 @@ export function SearchBar() {
   };
 
   const speechLang = useMemo(() => {
-    const map: Record<string, string> = {
-      en: "en-US",
-      ms: "ms-MY",
-      ta: "ta-IN",
-      "zh-Hans": "zh-CN",
-      "zh-Hant": "zh-TW",
-      iba: "ms-MY",
-      melanau: "ms-MY",
-      bidayuh: "ms-MY",
-      kelabit: "ms-MY",
-      es: "es-ES",
-    };
-    return map[language] ?? language ?? "en-US";
+    return speechLangFor(language);
   }, [language]);
 
   useEffect(() => {

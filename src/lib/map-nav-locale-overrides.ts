@@ -4,7 +4,7 @@
  */
 
 type NavPatch = {
-  common?: { unitM?: string };
+  common?: { unitM?: string; speechUnitM?: string; speechUnitKm?: string };
   map?: {
     navAfterMeters?: string;
     navArriveAfterMeters?: string;
@@ -23,7 +23,7 @@ function m(row: Record<string, string>): Record<string, string> {
 
 const PATCHES: Record<string, NavPatch> = {
   ms: {
-    common: { unitM: "m" },
+    common: { unitM: "m", speechUnitM: "meter", speechUnitKm: "kilometer" },
     map: {
       navAfterMeters: "{{action}} selepas {{meters}}\u00a0{{unit}}",
       navArriveAfterMeters: "Tiba selepas {{meters}}\u00a0{{unit}}",
@@ -55,7 +55,7 @@ const PATCHES: Record<string, NavPatch> = {
     },
   },
   "zh-Hans": {
-    common: { unitM: "米" },
+    common: { unitM: "米", speechUnitM: "米", speechUnitKm: "公里" },
     map: {
       navAfterMeters: "{{meters}}{{unit}}后{{action}}",
       navArriveAfterMeters: "{{meters}}{{unit}}后到达",
@@ -87,7 +87,7 @@ const PATCHES: Record<string, NavPatch> = {
     },
   },
   "zh-Hant": {
-    common: { unitM: "公尺" },
+    common: { unitM: "公尺", speechUnitM: "公尺", speechUnitKm: "公里" },
     map: {
       navAfterMeters: "{{meters}}{{unit}}後{{action}}",
       navArriveAfterMeters: "{{meters}}{{unit}}後到達",
@@ -119,7 +119,7 @@ const PATCHES: Record<string, NavPatch> = {
     },
   },
   ja: {
-    common: { unitM: "m" },
+    common: { unitM: "m", speechUnitM: "メートル", speechUnitKm: "キロメートル" },
     map: {
       navAfterMeters: "{{meters}}{{unit}}先で{{action}}",
       navArriveAfterMeters: "あと{{meters}}{{unit}}で到着",
@@ -281,7 +281,7 @@ const PATCHES: Record<string, NavPatch> = {
     },
   },
   ko: {
-    common: { unitM: "m" },
+    common: { unitM: "m", speechUnitM: "미터", speechUnitKm: "킬로미터" },
     map: {
       navAfterMeters: "{{meters}}{{unit}} 앞에서 {{action}}",
       navArriveAfterMeters: "{{meters}}{{unit}} 앞 도착",
@@ -308,7 +308,7 @@ const PATCHES: Record<string, NavPatch> = {
     },
   },
   id: {
-    common: { unitM: "m" },
+    common: { unitM: "m", speechUnitM: "meter", speechUnitKm: "kilometer" },
     map: {
       navAfterMeters: "{{action}} setelah {{meters}}\u00a0{{unit}}",
       navArriveAfterMeters: "Tiba setelah {{meters}}\u00a0{{unit}}",
@@ -335,7 +335,7 @@ const PATCHES: Record<string, NavPatch> = {
     },
   },
   th: {
-    common: { unitM: "ม." },
+    common: { unitM: "ม.", speechUnitM: "เมตร", speechUnitKm: "กิโลเมตร" },
     map: {
       navAfterMeters: "อีก {{meters}}\u00a0{{unit}} {{action}}",
       navArriveAfterMeters: "ถึงปลายทางใน {{meters}}\u00a0{{unit}}",
@@ -362,7 +362,7 @@ const PATCHES: Record<string, NavPatch> = {
     },
   },
   vi: {
-    common: { unitM: "m" },
+    common: { unitM: "m", speechUnitM: "mét", speechUnitKm: "kilômet" },
     map: {
       navAfterMeters: "{{action}} sau {{meters}}\u00a0{{unit}}",
       navArriveAfterMeters: "Đến nơi sau {{meters}}\u00a0{{unit}}",
@@ -713,7 +713,7 @@ const PATCHES: Record<string, NavPatch> = {
     },
   },
   fil: {
-    common: { unitM: "m" },
+    common: { unitM: "m", speechUnitM: "metro", speechUnitKm: "kilometro" },
     map: {
       navAfterMeters: "{{action}} pagkalipas ng {{meters}}\u00a0{{unit}}",
       navArriveAfterMeters: "Dating sa {{meters}}\u00a0{{unit}}",

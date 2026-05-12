@@ -99,6 +99,11 @@ export function NearbyStationsPanel({ origin, open, onClose, onSelect }: Props) 
   const { t } = useTranslation();
   const [refreshKey, setRefreshKey] = useState(0);
 
+  const homeDestination = useMemo(
+    () => ({ ...HOME_DESTINATION, name: t("map.homeShortcut") }),
+    [t],
+  );
+
   const sorted = useMemo(() => {
     return KUCHING_CHARGING_STATIONS.map((s) => ({
       station: s,
@@ -117,7 +122,7 @@ export function NearbyStationsPanel({ origin, open, onClose, onSelect }: Props) 
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          onSelect(HOME_DESTINATION);
+          onSelect(homeDestination);
         }}
         className="group flex w-full items-start gap-2 px-3 py-2 text-left hover:bg-[var(--active)]"
         title={t("map.navigateHome")}

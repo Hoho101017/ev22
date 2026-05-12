@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import type { TFunction } from "i18next";
 import {
   ArrowUp,
@@ -11,6 +12,8 @@ import {
   Undo2,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useApp } from "@/lib/app-context";
+import { speechLangFor } from "@/lib/speech-lang-map";
 import type { NavigationCue } from "@/lib/osrm-navigation";
 
 function normMod(mod: string | null): string {
@@ -76,12 +79,19 @@ function maneuverInstruction(
 }
 
 function formatNavDistance(meters: number, t: TFunction): string {
+  const parts = formatNavDistanceParts(meters, t, false);
+  return `${parts.value}\u00a0${parts.unit}`;
+}
+
+function formatNavDistanceParts(meters: number, t: TFunction, speech = false) {
   const m = Math.max(0, Math.round(meters));
-  if (m < 1000) return `${m}\u00a0${t("common.unitM")}`;
+  const unitM = t(speech ? "common.speechUnitM" : "common.unitM");
+  const unitKm = t(speech ? "common.speechUnitKm" : "common.unitKm");
+  if (m < 1000) return { value: String(m), unit: unitM };
   const km = m / 1000;
   const label = km >= 10 ? Math.round(km) : Math.round(km * 10) / 10;
   const num = Number.isInteger(label) ? String(label) : label.toFixed(1);
-  return `${num}\u00a0${t("common.unitKm")}`;
+  return { value: num, unit: unitKm };
 }
 
 function englishOrdinal(n: number): string {
@@ -215,6 +225,30 @@ function CueIcon({ cue, className }: { cue: NavigationCue; className: string }) 
 const iconClassOverlay = "h-[52px] w-[52px] shrink-0 text-[var(--brand)] drop-shadow-sm";
 const iconClassPanel = "h-[44px] w-[44px] shrink-0 text-[var(--brand)] drop-shadow-sm";
 
+function selectSpeechVoice(lang: string): SpeechSynthesisVoice | null {
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) return null;
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices.length) return null;
+
+  const normalized = lang.toLowerCase();
+  const exact = voices.find((voice) => voice.lang.toLowerCase() === normalized);
+  if (exact) return exact;
+
+  const primary = normalized.split("-")[0];
+  const primaryMatch = voices.find((voice) => voice.lang.toLowerCase().startsWith(primary));
+  if (primaryMatch) return primaryMatch;
+
+  const region = normalized.includes("-") ? normalized.split("-")[1] : "";
+  if (region) {
+    const regionMatch = voices.find((voice) => voice.lang.toLowerCase().endsWith(`-${region}`));
+    if (regionMatch) return regionMatch;
+  }
+
+  // If no match, return the default voice or first available voice
+  // This allows setting lang even with a mismatched voice
+  return voices.find((v) => v.default) || voices[0] || null;
+}
+
 export function NavigationCueOverlay({
   cue,
   t,
@@ -227,6 +261,8 @@ export function NavigationCueOverlay({
 }) {
   const { i18n } = useTranslation();
   const lng = i18n.resolvedLanguage || i18n.language;
+  const speechLang = speechLangFor(lng);
+  const selectedVoice = selectSpeechVoice(speechLang);
   const hasRoundaboutTakeExitKey = i18n.exists("map.maneuver.roundaboutTakeExit", {
     lng,
     fallbackLng: false,
@@ -277,6 +313,75 @@ export function NavigationCueOverlay({
           meters: cue.distanceMeters,
           unit: t("common.unitM"),
         });
+
+  const speechDistance = formatNavDistanceParts(cue.distanceMeters, t, true);
+  const speechLabel =
+    cueType === "arrive"
+      ? t("map.navArriveAfterMeters", {
+          meters: speechDistance.value,
+          unit: speechDistance.unit,
+        })
+      : t("map.navAfterMeters", {
+          action: actionLabel || instruction,
+          meters: speechDistance.value,
+          unit: speechDistance.unit,
+        });
+
+  const { playBeep, audioEl } = useApp();
+  const lastSpokenCueRef = useRef<string | null>(null);
+  const wasPlayingRef = useRef(false);
+  const originalVolumeRef = useRef<number | null>(null);
+  const speechText = speechLabel;
+
+  useEffect(() => {
+    const cueKey = `${cueType}|${normMod(cue.maneuverModifier)}|${cue.roundaboutExit ?? ""}|${actionLabel}`;
+    if (lastSpokenCueRef.current === cueKey) return;
+    lastSpokenCueRef.current = cueKey;
+
+    if (typeof window === "undefined") return;
+    if (!("speechSynthesis" in window)) return;
+
+    try {
+      playBeep("chime");
+    } catch {
+      // ignore if audio context is not available
+    }
+
+    wasPlayingRef.current = Boolean(audioEl && !audioEl.paused);
+    if (wasPlayingRef.current && audioEl) {
+      originalVolumeRef.current = audioEl.volume;
+    }
+
+    const utterance = new SpeechSynthesisUtterance(speechText);
+    utterance.lang = speechLang;
+    if (selectedVoice) utterance.voice = selectedVoice;
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+    utterance.onstart = () => {
+      if (wasPlayingRef.current && audioEl) {
+        const ducked = Math.max(0.08, (originalVolumeRef.current ?? 1) * 0.15);
+        audioEl.volume = ducked;
+      }
+    };
+    utterance.onend = () => {
+      if (wasPlayingRef.current && audioEl && originalVolumeRef.current != null) {
+        audioEl.volume = originalVolumeRef.current;
+      }
+    };
+    utterance.onerror = () => {
+      if (wasPlayingRef.current && audioEl && originalVolumeRef.current != null) {
+        audioEl.volume = originalVolumeRef.current;
+      }
+    };
+
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+
+    return () => {
+      utterance.onend = null;
+    };
+  }, [actionLabel, audioEl, cue.roundaboutExit, cueType, lng, playBeep, selectedVoice, speechLang, speechText]);
 
   const shell =
     variant === "panel"

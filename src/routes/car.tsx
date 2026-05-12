@@ -42,7 +42,7 @@ function CarPage() {
               return (
                 <button
                   key={v}
-                  onClick={() => setDrivingMode(v)}
+                  onClick={() => setDrivingMode(active ? null : v)}
                   className={`flex flex-col items-center justify-center gap-1 rounded-[14px] border px-1 py-1 transition-all ${
                     active ? "border-green-400 bg-green-200/70" : "border-border bg-app-panel-soft hover:bg-[var(--active)]/50"
                   }`}

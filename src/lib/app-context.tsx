@@ -62,8 +62,8 @@ interface AppCtx {
   setBluetoothOn: (v: boolean) => void;
   pairedDevice: string | null;
   setPairedDevice: (v: string | null) => void;
-  drivingMode: "adaptive" | "parking" | "lane";
-  setDrivingMode: (v: "adaptive" | "parking" | "lane") => void;
+  drivingMode: "adaptive" | "parking" | "lane" | null;
+  setDrivingMode: (v: "adaptive" | "parking" | "lane" | null) => void;
   gear: "P" | "R" | "N" | "D";
   setGear: (g: "P" | "R" | "N" | "D") => void;
   speedKmh: number;
@@ -125,7 +125,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<string>("en");
   const [bluetoothOn, setBluetoothOn] = useState(true);
   const [pairedDevice, setPairedDevice] = useState<string | null>(null);
-  const [drivingMode, setDrivingMode] = useState<"adaptive" | "parking" | "lane">("adaptive");
+  const [drivingMode, setDrivingMode] = useState<"adaptive" | "parking" | "lane" | null>("adaptive");
   const [gear, setGear] = useState<"P" | "R" | "N" | "D">("D");
   const [speedKmh, setSpeedKmh] = useState(70);
   const [traveledKm, setTraveledKm] = useState(2099);

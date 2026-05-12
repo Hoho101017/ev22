@@ -49,6 +49,7 @@ export function GlobalAudioPlayer() {
   useEffect(() => {
     const a = audioRef.current;
     if (!a) return;
+    a.load();
     if (playing) a.play().catch(() => setPlaying(false));
     else a.pause();
   }, [playing, trackIdx, setPlaying]);
@@ -92,6 +93,7 @@ export function GlobalAudioPlayer() {
       : (trackIdx + 1) % GLOBAL_PLAYLIST.length;
     setTrackIdx(next);
     setProgress(0);
+    setPlaying(true);
   };
 
   return (

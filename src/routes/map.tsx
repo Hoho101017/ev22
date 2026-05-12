@@ -448,7 +448,8 @@ function MapPage() {
   const GAP_Y = 8;
   const H_SEARCH = 50;         // ~887×95 ratio scaled to 590w
   const H_GEAR = 470;
-  const H_MAP = H_GEAR - H_SEARCH - GAP_Y; // lock map baseline to gear baseline
+  const H_MAP_BASE = H_GEAR - H_SEARCH - GAP_Y;
+  const H_MAP = H_MAP_BASE;
   const H_BOTTOM = 120;
 
   return (
@@ -504,14 +505,16 @@ function MapPage() {
               style={{ height: H_SEARCH }}
             >
               <div className="min-w-0">
-                <div className="text-sm font-semibold text-foreground/90 truncate">
-                  {t("map.routingTo", { destination: shownDestination })}
+                <div className="flex min-w-0 items-center gap-3 text-sm font-semibold leading-tight">
+                  <span className="truncate text-base text-foreground/95">
+                    {t("map.routingTo", { destination: shownDestination })}
+                  </span>
+                  {navTimeSummary ? (
+                    <span className="min-w-0 truncate text-[15px] font-bold text-[var(--brand)]">
+                      {navTimeSummary}
+                    </span>
+                  ) : null}
                 </div>
-                {navTimeSummary ? (
-                  <div className="mt-0.5 text-[11px] font-medium text-muted-foreground truncate">
-                    {navTimeSummary}
-                  </div>
-                ) : null}
               </div>
               <div className="rounded-full bg-[var(--active)] px-3 py-1 text-xs font-semibold text-foreground">
                 {t("map.navigation")}
@@ -577,7 +580,7 @@ function MapPage() {
                   setNavigationActive(false);
                   setActiveRoute(null);
                 }}
-                className="absolute bottom-3 left-1/2 z-[1200] -translate-x-1/2 rounded-full bg-black/60 px-4 py-2 text-[12px] font-bold text-white backdrop-blur hover:bg-black/70"
+                className="absolute bottom-3 left-1/2 z-[1200] -translate-x-1/2 rounded-full bg-[var(--brand)] px-4 py-2 text-[13px] font-bold text-white shadow-lg shadow-[rgba(0,0,0,0.18)] transition hover:brightness-95"
                 aria-label={t("map.endNavigation")}
               >
                 {t("map.endNavigation")}

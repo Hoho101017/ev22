@@ -32,6 +32,8 @@ const resources = {
         doubleTapHome: "Double-tap icon to go home",
         unitKm: "km",
         unitM: "m",
+        speechUnitKm: "kilometers",
+        speechUnitM: "meters",
       },
       sidebar: {
         settings: "Settings",
