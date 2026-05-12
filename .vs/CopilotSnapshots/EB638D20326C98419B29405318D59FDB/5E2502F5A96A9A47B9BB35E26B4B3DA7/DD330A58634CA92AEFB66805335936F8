@@ -1,0 +1,82 @@
+﻿import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { SkipForward, Plus, Minus } from "lucide-react";
+import { useApp } from "@/lib/app-context";
+import { PLAYLIST } from "@/components/MediaCard";
+
+export function MusicQuickCard() {
+  const { t, i18n } = useTranslation();
+  const { volume, setVolume, trackIdx, setTrackIdx, playing, setPlaying, audioEl, setProgress } = useApp();
+  const [previewNextTitle, setPreviewNextTitle] = useState<string | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
+
+  const curTrack = useMemo(() => PLAYLIST[trackIdx], [trackIdx]);
+  const nextIdx = useMemo(() => (trackIdx + 1) % PLAYLIST.length, [trackIdx]);
+  const nextTrack = useMemo(() => PLAYLIST[nextIdx], [nextIdx]);
+
+  const updateVolume = (delta: number) => {
+    setVolume((prev) => {
+      const next = Math.min(1, Math.max(0, prev + delta));
+      return next;
+    });
+  };
+
+  const handleNextSong = () => {
+    setTrackIdx(nextIdx);
+    setProgress(0);
+    setPlaying(true);
+    setPreviewNextTitle(nextTrack.title);
+    setShowPreview(true);
+    if (audioEl) {
+      audioEl.currentTime = 0;
+      audioEl.load();
+    }
+    window.setTimeout(() => setShowPreview(false), 750);
+  };
+
+  useEffect(() => {
+    if (!showPreview) return;
+    const id = window.setTimeout(() => setShowPreview(false), 750);
+    return () => window.clearTimeout(id);
+  }, [showPreview]);
+
+  return (
+    <div className="flex h-full w-full items-center justify-between gap-[12px] px-[12px] py-[12px]">
+      <div className="min-w-0">
+        <div className="mt-[4px] min-w-0 truncate text-[14px] font-semibold text-foreground">
+          {showPreview && previewNextTitle ? `Next song: ${previewNextTitle}` : curTrack.title}
+        </div>
+        <div className="mt-[2px] truncate text-[11px] text-muted-foreground">
+          {showPreview && previewNextTitle ? t("media.swipePreview", "Swipe to skip") : curTrack.artist}
+        </div>
+      </div>
+      <div className="flex items-center gap-[8px]">
+        <button
+          type="button"
+          onClick={() => updateVolume(-0.1)}
+          className="flex h-[36px] w-[36px] items-center justify-center rounded-[14px] bg-app-panel-soft text-foreground transition hover:bg-[var(--active)]/15"
+          aria-label={t("media.volumeDown", "Volume down")}
+        >
+          <Minus className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          onClick={handleNextSong}
+          className="flex h-[36px] min-w-[72px] items-center justify-center rounded-[14px] bg-[var(--active)] px-[12px] text-[13px] font-semibold text-foreground shadow-sm transition hover:brightness-95"
+          aria-label={t("media.nextTrack", "Next song")}
+        >
+          <SkipForward className="mr-2 h-4 w-4" />
+          {t("media.next", "Next")}
+        </button>
+        <button
+          type="button"
+          onClick={() => updateVolume(0.1)}
+          className="flex h-[36px] w-[36px] items-center justify-center rounded-[14px] bg-app-panel-soft text-foreground transition hover:bg-[var(--active)]/15"
+          aria-label={t("media.volumeUp", "Volume up")}
+        >
+          <Plus className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
+  );
+}
