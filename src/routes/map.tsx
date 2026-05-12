@@ -479,10 +479,11 @@ function MapPage() {
   const W_RIGHT = 268;
   const GAP = 10;
   const GAP_Y = 8;
-  const H_SEARCH = 50;         // ~887×95 ratio scaled to 590w
+  const H_SEARCH_IDLE = 50; // destination search row
+  const H_SEARCH_NAV = 62; // routing + remaining / arrive (two lines, no clipping)
+  const searchBarHeight = navigationActive ? H_SEARCH_NAV : H_SEARCH_IDLE;
   const H_GEAR = 470;
-  const H_MAP_BASE = H_GEAR - H_SEARCH - GAP_Y;
-  const H_MAP = H_MAP_BASE;
+  const H_MAP = H_GEAR - searchBarHeight - GAP_Y;
   const H_BOTTOM = 120;
 
   return (
@@ -493,7 +494,7 @@ function MapPage() {
           {!navigationActive ? (
             <form
               className="bg-app-panel relative flex items-center gap-2 rounded-full px-4 shadow-sm ring-1 ring-black/5"
-              style={{ height: H_SEARCH }}
+              style={{ height: searchBarHeight }}
               onSubmit={(e) => {
                 e.preventDefault();
                 const trimmed = destination.trim();
@@ -534,22 +535,20 @@ function MapPage() {
             </form>
           ) : (
             <div
-              className="bg-app-panel relative flex items-center justify-between gap-2 rounded-full px-4 shadow-sm ring-1 ring-black/5"
-              style={{ height: H_SEARCH }}
+              className="bg-app-panel relative flex items-center justify-between gap-2 rounded-full px-4 py-1.5 shadow-sm ring-1 ring-black/5"
+              style={{ minHeight: searchBarHeight, height: searchBarHeight }}
             >
-              <div className="min-w-0">
-                <div className="flex min-w-0 items-center gap-3 text-sm font-semibold leading-tight">
-                  <span className="truncate text-base text-foreground/95">
-                    {t("map.routingTo", { destination: routingBannerDestination })}
-                  </span>
-                  {navTimeSummary ? (
-                    <span className="min-w-0 truncate text-[15px] font-bold text-[var(--brand)]">
-                      {navTimeSummary}
-                    </span>
-                  ) : null}
+              <div className="min-w-0 flex-1 pr-1">
+                <div className="truncate text-sm font-semibold leading-tight text-foreground/95">
+                  {t("map.routingTo", { destination: routingBannerDestination })}
                 </div>
+                {navTimeSummary ? (
+                  <div className="mt-0.5 break-words text-[12px] font-bold leading-snug text-[var(--brand)]">
+                    {navTimeSummary}
+                  </div>
+                ) : null}
               </div>
-              <div className="rounded-full bg-[var(--active)] px-3 py-1 text-xs font-semibold text-foreground">
+              <div className="shrink-0 self-center rounded-full bg-[var(--active)] px-3 py-1 text-xs font-semibold text-foreground">
                 {t("map.navigation")}
               </div>
             </div>

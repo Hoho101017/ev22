@@ -59,11 +59,11 @@ export function TopBarMusicCard({ onClose }: TopBarMusicCardProps) {
         <button
           type="button"
           onClick={nextTrack}
-          className="flex h-[40px] min-w-[86px] items-center justify-center rounded-[16px] bg-[var(--active)] px-[12px] text-[14px] font-semibold text-foreground shadow-sm transition hover:brightness-95"
+          className="flex h-[40px] min-w-[76px] max-w-[128px] shrink-0 items-center justify-center gap-1.5 rounded-[16px] bg-[var(--active)] px-[10px] text-[12px] font-semibold leading-none tracking-tight text-foreground shadow-sm transition hover:brightness-95"
           aria-label={t("media.nextTrack", "Next song")}
         >
-          <SkipForward className="mr-2 h-4 w-4" />
-          {t("media.next", "Next")}
+          <SkipForward className="h-3.5 w-3.5 shrink-0" aria-hidden />
+          <span className="min-w-0 truncate">{t("media.next", "Next")}</span>
         </button>
         <button
           type="button"

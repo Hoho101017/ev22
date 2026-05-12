@@ -62,11 +62,11 @@ export function MusicQuickCard() {
         <button
           type="button"
           onClick={handleNextSong}
-          className="flex h-[36px] min-w-[72px] items-center justify-center rounded-[14px] bg-[var(--active)] px-[12px] text-[13px] font-semibold text-foreground shadow-sm transition hover:brightness-95"
+          className="flex h-[36px] min-w-[64px] max-w-[118px] shrink-0 items-center justify-center gap-1 rounded-[14px] bg-[var(--active)] px-[8px] text-[11px] font-semibold leading-none tracking-tight text-foreground shadow-sm transition hover:brightness-95"
           aria-label={t("media.nextTrack", "Next song")}
         >
-          <SkipForward className="mr-2 h-4 w-4" />
-          {t("media.next", "Next")}
+          <SkipForward className="h-3.5 w-3.5 shrink-0" aria-hidden />
+          <span className="min-w-0 truncate">{t("media.next", "Next")}</span>
         </button>
         <button
           type="button"
