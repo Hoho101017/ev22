@@ -9,8 +9,9 @@ import { useApp } from "@/lib/app-context";
 export function TopBar() {
   const { i18n } = useTranslation();
   const { location } = useRouterState();
-  const { activeRoute } = useApp();
+  const { activeRoute, gear } = useApp();
   const path = location.pathname;
+  const reversing = gear === "R";
   const [topBarMusicVisible, setTopBarMusicVisible] = useState(true);
   const showMusicCard =
     topBarMusicVisible && path === "/map" && activeRoute?.navigationHudShown && activeRoute.routeLine.length > 1;
@@ -44,20 +45,24 @@ export function TopBar() {
 
   return (
     <header className="relative z-[200] flex h-[68px] shrink-0 items-center justify-between gap-4 overflow-visible px-[16px] pt-[12px] pb-[12px]">
-      <div className="min-w-0 flex-1 leading-none">
-        <span
-          className="block overflow-hidden text-ellipsis whitespace-nowrap font-bold tracking-tight"
-          style={{ fontSize: "clamp(28px, 3.2vw, 36px)", lineHeight: 1 }}
-        >
-          {time}
-        </span>
-        <span
-          className="mt-1 block overflow-hidden text-ellipsis whitespace-nowrap font-semibold tracking-[0.15em] text-foreground/70"
-          style={{ fontSize: "12px", lineHeight: 1.15 }}
-        >
-          {date}
-        </span>
-      </div>
+      {reversing ? (
+        <div className="min-w-0 flex-1" aria-hidden />
+      ) : (
+        <div className="min-w-0 flex-1 leading-none">
+          <span
+            className="block overflow-hidden text-ellipsis whitespace-nowrap font-bold tracking-tight"
+            style={{ fontSize: "clamp(28px, 3.2vw, 36px)", lineHeight: 1 }}
+          >
+            {time}
+          </span>
+          <span
+            className="mt-1 block overflow-hidden text-ellipsis whitespace-nowrap font-semibold tracking-[0.15em] text-foreground/70"
+            style={{ fontSize: "12px", lineHeight: 1.15 }}
+          >
+            {date}
+          </span>
+        </div>
+      )}
       {showMusicCard ? (
         <TopBarMusicCard onClose={() => setTopBarMusicVisible(false)} />
       ) : showMusicIcon ? (

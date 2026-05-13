@@ -6,6 +6,8 @@ import { TopBar } from "@/components/TopBar";
 import { ReverseCamera } from "@/components/ReverseCamera";
 import { GearPanel } from "@/components/GearPanel.tsx";
 import { GlobalAudioPlayer } from "@/components/GlobalAudioPlayer";
+import { SearchBar } from "@/components/SearchBar";
+import { StatusCard } from "@/components/StatusCard";
 import { I18nextProvider } from "react-i18next";
 import i18n from "@/lib/i18n";
 import { useTranslation } from "react-i18next";
@@ -77,37 +79,56 @@ function Frame() {
           filter: `brightness(${brightness})`,
         }}
       >
-        <div className="flex h-full w-full">
-          <Sidebar />
-          <div className="relative flex h-full flex-1 flex-col">
-            <TopBar />
-            <main className="relative z-0 flex-1 overflow-visible px-[16px] pt-[12px] pb-[12px]">
-              <Outlet />
-            </main>
-          </div>
-        </div>
-        <GlobalAudioPlayer />
-
-        {reversing && (
-          <div
-            className="absolute inset-0 z-[400]"
-            style={{ background: "var(--background)" }}
-          >
-            <div className="h-full w-full">
-              {/* Reverse mode contains only camera + gear panel. */}
-              <div
-                className="absolute overflow-hidden rounded-[24px] shadow-sm ring-1 ring-black/5"
-                style={{ left: 16, top: 16, width: 650, bottom: 16 }}
-              >
-                <ReverseCamera className="h-full w-full rounded-[24px]" />
-              </div>
-
-              {/* Keep gear panel aligned with normal page position (below top bar). */}
-              <div className="absolute right-[16px]" style={{ top: 80, width: 268, height: 470 }}>
-                <GearPanel />
+        {reversing ? (
+          <>
+            {/* Reverse: no left sidebar — full width for camera + right stack (matches mock). */}
+            <div className="flex h-full w-full">
+              <div className="relative flex h-full min-h-0 w-full flex-col">
+                <main className="relative z-0 flex min-h-0 flex-1 overflow-visible px-[16px] pt-[12px] pb-[12px]">
+                  <div
+                    className="grid min-h-0 h-full w-full items-stretch"
+                    style={{
+                      gridTemplateColumns: "1fr 268px",
+                      gridTemplateRows: "68px 1fr",
+                      columnGap: 10,
+                      rowGap: 0,
+                    }}
+                  >
+                    <div className="relative col-start-1 row-span-2 min-h-0 min-w-0 overflow-hidden rounded-[24px] bg-black shadow-sm ring-1 ring-black/5">
+                      <ReverseCamera embedded className="h-full min-h-0 w-full" />
+                    </div>
+                    <div className="relative z-[200] col-start-2 row-start-1 flex items-center justify-end overflow-visible">
+                      <div className="-translate-y-1.5">
+                        <SearchBar />
+                      </div>
+                    </div>
+                    <div className="col-start-2 row-start-2 flex min-h-0 min-w-0 flex-col" style={{ gap: 8 }}>
+                      <div className="shrink-0" style={{ height: 470 }}>
+                        <GearPanel />
+                      </div>
+                      <div className="shrink-0" style={{ height: 120 }}>
+                        <StatusCard showWeather />
+                      </div>
+                    </div>
+                  </div>
+                </main>
               </div>
             </div>
-          </div>
+            <GlobalAudioPlayer />
+          </>
+        ) : (
+          <>
+            <div className="flex h-full w-full">
+              <Sidebar />
+              <div className="relative flex h-full min-h-0 flex-1 flex-col">
+                <TopBar />
+                <main className="relative z-0 flex min-h-0 flex-1 overflow-visible px-[16px] pt-[12px] pb-[12px]">
+                  <Outlet />
+                </main>
+              </div>
+            </div>
+            <GlobalAudioPlayer />
+          </>
         )}
       </div>
     </div>

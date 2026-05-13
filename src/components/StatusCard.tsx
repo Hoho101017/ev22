@@ -9,10 +9,11 @@ import {
 } from "@/components/NearbyStationsPanel";
 import { Cloud, CloudRain, CloudSnow, Sun, Zap, Undo2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { cn } from "@/lib/utils";
 
-export function StatusCard() {
+export function StatusCard({ showWeather = true }: { showWeather?: boolean }) {
   const { t } = useTranslation();
-  const { batteryLevel, weather, traveledKm } = useApp();
+  const { batteryLevel, weather, traveledKm, gear } = useApp();
   const navigate = useNavigate();
   const [showStations, setShowStations] = useState(false);
 
@@ -27,11 +28,19 @@ export function StatusCard() {
   const left = Math.round(450 * batteryLevel);
   const fillColor = pct > 50 ? "#22c55e" : pct > 20 ? "#f59e0b" : "#ef4444";
 
-  // Auto revert after 5s
+  const locked = gear === "R";
+  const lockedFillColor = pct > 50 ? "#4f7a5c" : pct > 20 ? "#8c7639" : "#9a4a4a";
+  const batteryStroke = locked ? "#57534e" : "#374151";
+
+  // Reverse mode: status card is read-only; dismiss charging overlay if it was open.
+  useEffect(() => {
+    if (locked) setShowStations(false);
+  }, [locked]);
+
   useEffect(() => {
     if (!showStations) return;
-    const t = setTimeout(() => setShowStations(false), 5000);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setShowStations(false), 5000);
+    return () => clearTimeout(timer);
   }, [showStations]);
 
   const Icon = weather.condition === "Sunny" ? Sun
@@ -92,15 +101,23 @@ export function StatusCard() {
 
   return (
     <button
+      type="button"
+      disabled={locked}
       onClick={() => setShowStations(true)}
-      className="flex h-full w-full cursor-pointer items-center gap-1.5 overflow-hidden rounded-[24px] bg-app-panel px-2 py-2 text-left shadow-sm ring-1 ring-black/5 transition hover:ring-black/10"
+      className={cn(
+        "flex h-full w-full items-center gap-1.5 overflow-hidden rounded-[24px] px-2 py-2 text-left shadow-sm ring-1 transition",
+        locked
+          ? "cursor-not-allowed bg-neutral-300/95 text-neutral-600 ring-neutral-400/90 hover:ring-neutral-400/90 dark:bg-zinc-800/95 dark:text-zinc-300 dark:ring-zinc-600/70"
+          : "cursor-pointer bg-app-panel text-foreground ring-black/5 hover:ring-black/10",
+      )}
+      aria-disabled={locked}
     >
       {/* Battery icon */}
       <div className="flex w-[44px] shrink-0 flex-col items-center">
         <svg width="44" height="62" viewBox="0 0 54 76">
-          <rect x="17" y="2" width="20" height="6" rx="1.5" fill="#374151" />
-          <rect x="4" y="8" width="46" height="64" rx="6" fill="none" stroke="#374151" strokeWidth="2.6"/>
-          <rect x="9" y={13 + (54 * (1 - batteryLevel))} width="36" height={54 * batteryLevel} rx="3" fill={fillColor} />
+          <rect x="17" y="2" width="20" height="6" rx="1.5" fill={batteryStroke} />
+          <rect x="4" y="8" width="46" height="64" rx="6" fill="none" stroke={batteryStroke} strokeWidth="2.6" />
+          <rect x="9" y={13 + (54 * (1 - batteryLevel))} width="36" height={54 * batteryLevel} rx="3" fill={locked ? lockedFillColor : fillColor} />
         </svg>
       </div>
       {/* Numbers — sizes respect --hki-font-scale with caps so nothing clips in the fixed slot */}
@@ -129,30 +146,39 @@ export function StatusCard() {
           <span style={{ fontSize: "clamp(8px, calc(9px * var(--hki-font-scale, 1)), 11px)" }}>{t("common.unitKm")}</span>
         </div>
       </div>
-      {/* Weather — column centered in tile; condition scrolls in a capped band if needed */}
-      <div className="flex h-[86px] w-[108px] shrink-0 flex-col items-center justify-center gap-1 overflow-hidden rounded-[18px] bg-gradient-to-b from-sky-200 to-sky-300 px-1.5 py-1 text-center text-slate-800">
-        <Icon
-          className="shrink-0"
-          strokeWidth={2}
-          style={{
-            width: "clamp(18px, calc(22px * var(--hki-font-scale, 1)), 26px)",
-            height: "clamp(18px, calc(22px * var(--hki-font-scale, 1)), 26px)",
-          }}
-        />
+      {/* Weather — optional (reverse mode wants battery-only). */}
+      {showWeather && (
         <div
-          className="w-full shrink-0 font-extrabold leading-none tabular-nums"
-          style={{ fontSize: "clamp(12px, calc(17px * var(--hki-font-scale, 1)), 20px)" }}
+          className={cn(
+            "flex h-[86px] w-[108px] shrink-0 flex-col items-center justify-center gap-1 overflow-hidden rounded-[18px] bg-gradient-to-b px-1.5 py-1 text-center",
+            locked
+              ? "from-[#9eb0bf] to-[#7d8fa0] text-slate-800 dark:from-slate-600 dark:to-slate-700 dark:text-slate-200"
+              : "from-sky-200 to-sky-300 text-slate-800",
+          )}
         >
-          {weather.tempC}°
+          <Icon
+            className={cn("shrink-0", locked && "text-slate-700/90 dark:text-slate-300")}
+            strokeWidth={2}
+            style={{
+              width: "clamp(18px, calc(22px * var(--hki-font-scale, 1)), 26px)",
+              height: "clamp(18px, calc(22px * var(--hki-font-scale, 1)), 26px)",
+            }}
+          />
+          <div
+            className="w-full shrink-0 font-extrabold leading-none tabular-nums"
+            style={{ fontSize: "clamp(12px, calc(17px * var(--hki-font-scale, 1)), 20px)" }}
+          >
+            {weather.tempC}°
+          </div>
+          <div
+            className="mx-auto max-h-[38px] min-h-0 w-full max-w-full overflow-y-auto overflow-x-hidden whitespace-normal break-words px-0.5 text-center text-balance font-semibold leading-snug [scrollbar-width:thin]"
+            style={{ fontSize: "clamp(7px, calc(10px * var(--hki-font-scale, 1)), 11px)" }}
+            title={t(`weather.${conditionKey}`)}
+          >
+            {t(`weather.${conditionKey}`)}
+          </div>
         </div>
-        <div
-          className="mx-auto max-h-[38px] min-h-0 w-full max-w-full overflow-y-auto overflow-x-hidden whitespace-normal break-words px-0.5 text-center text-balance font-semibold leading-snug [scrollbar-width:thin]"
-          style={{ fontSize: "clamp(7px, calc(10px * var(--hki-font-scale, 1)), 11px)" }}
-          title={t(`weather.${conditionKey}`)}
-        >
-          {t(`weather.${conditionKey}`)}
-        </div>
-      </div>
+      )}
     </button>
   );
 }

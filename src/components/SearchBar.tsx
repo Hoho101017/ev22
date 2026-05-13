@@ -3,6 +3,7 @@ import { Mic, Search, X, Clock } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useApp } from "@/lib/app-context";
 import { speechLangFor } from "@/lib/speech-lang-map";
+import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 
 const TARGETS: { kw: string[]; to: string; labelKey: string }[] = [
@@ -216,10 +217,12 @@ export function SearchBar() {
     <div className="relative w-full max-w-[274px] min-w-[220px] shrink">
       {/* Search bar — 274×52 ≈ 442×95 ratio (4.65:1) */}
       <div
-        className={[
-          "bg-app-panel relative flex items-center gap-2 overflow-hidden rounded-full px-3 shadow-sm ring-1 ring-black/5",
-          reversing ? "opacity-40 pointer-events-none" : "",
-        ].join(" ")}
+        className={cn(
+          "relative flex items-center gap-2 overflow-hidden rounded-full px-3 shadow-sm ring-1",
+          reversing
+            ? "pointer-events-none cursor-not-allowed bg-neutral-200/95 text-neutral-500 ring-neutral-300/80 dark:bg-zinc-800/95 dark:text-zinc-400 dark:ring-zinc-600/70"
+            : "bg-app-panel text-foreground ring-black/5",
+        )}
         style={{ height: 52 }}
         aria-disabled={reversing}
       >
@@ -230,7 +233,11 @@ export function SearchBar() {
         )}
         <button
           onClick={toggleMic}
-          className={`flex h-[32px] w-[32px] shrink-0 items-center justify-center rounded-full transition ${listening ? "bg-[var(--brand)] text-white animate-mic-pulse" : "bg-app-panel-soft text-foreground/70 hover:bg-[var(--active)]"}`}
+          className={cn(
+            "flex h-[32px] w-[32px] shrink-0 items-center justify-center rounded-full transition",
+            listening ? "bg-[var(--brand)] text-white animate-mic-pulse" : "bg-app-panel-soft text-foreground/70 hover:bg-[var(--active)]",
+            reversing && !listening && "bg-neutral-300/80 text-neutral-500 dark:bg-zinc-700 dark:text-zinc-400",
+          )}
           aria-label={t("search.voiceSearch")}
         >
           <Mic className="h-[16px] w-[16px]" />
@@ -275,9 +282,19 @@ export function SearchBar() {
             }
           }}
           placeholder={reversing ? t("topbar.searchLocked") : t("topbar.searchBar")}
-          className="min-w-0 flex-1 bg-transparent text-[0.95rem] leading-tight outline-none placeholder:text-foreground/55"
+          className={cn(
+            "min-w-0 flex-1 bg-transparent text-[0.95rem] leading-tight outline-none placeholder:text-foreground/55",
+            reversing && "text-neutral-500 placeholder:text-neutral-400 dark:text-zinc-400 dark:placeholder:text-zinc-500",
+          )}
         />
-        <button onClick={onSearch} className="flex h-[32px] w-[32px] shrink-0 items-center justify-center rounded-full text-foreground/70 hover:bg-[var(--active)]" aria-label={t("common.search")}>
+        <button
+          onClick={onSearch}
+          className={cn(
+            "flex h-[32px] w-[32px] shrink-0 items-center justify-center rounded-full text-foreground/70 hover:bg-[var(--active)]",
+            reversing && "text-neutral-500 hover:bg-transparent dark:text-zinc-400",
+          )}
+          aria-label={t("common.search")}
+        >
           <Search className="h-[16px] w-[16px]" />
         </button>
       </div>

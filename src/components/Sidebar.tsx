@@ -17,8 +17,7 @@ export function Sidebar() {
   const { location } = useRouterState();
   const path = location.pathname;
   const navigate = useNavigate();
-  const { gear, musicExpanded, setMusicExpanded, theme, voicePopupOpen, setVoicePopupOpen } = useApp();
-  const reversing = gear === "R";
+  const { musicExpanded, setMusicExpanded, theme, voicePopupOpen, setVoicePopupOpen } = useApp();
   const cockpitMedia = path === "/" || path.startsWith("/voice");
   const mediaActive = musicExpanded && cockpitMedia;
   const homeIdleClass =
@@ -36,7 +35,9 @@ export function Sidebar() {
     }
   };
   return (
-    <aside className={`flex w-[60px] shrink-0 flex-col items-center py-[12px] ${reversing ? "bg-transparent" : "bg-[var(--sidebar-bg)]"}`}>
+    <aside
+      className={`flex w-[60px] shrink-0 flex-col items-center bg-[var(--sidebar-bg)] py-[12px]`}
+    >
       <div className="flex flex-1 flex-col items-stretch gap-[8px] self-stretch px-0">
         <Link
           to="/"
